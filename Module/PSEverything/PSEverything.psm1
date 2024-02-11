@@ -1,13 +1,28 @@
 function Find-Everything {
+    <#
+    .SYNOPSIS
+    PowerShell wrapper for Everything.
+    Instantly search for files on local and remote (via REST API) Windows systems.
+    .DESCRIPTION
+    Examples:
+    Find-Everything -HttpServerEnabled
+    Find-Everything -HttpServerDisabled
+    Find-Everything ping.exe
+    Find-Everything ping.exe -ComputerName localhost
+    Find-Everything ping.exe -ES
+    .LINK
+    https://github.com/Lifailon/PSEverything
+    https://github.com/dipique/everythingio
+    https://voidtools.com
+    #>
     param (
         $Search,
         $ComputerName,
         $Port = "80",
         [switch]$HttpServerEnabled,
         [switch]$HttpServerDisabled,
-        [switch]$Json
+        [switch]$ES
     )
-    $esPathExec = "$home\Documents\ES-1.1.0.26\es.exe"
     function ConvertFrom-Byte {
         param (
             $byte
@@ -29,6 +44,7 @@ function Find-Everything {
         }
         return $size
     }
+    ### REST API
     if ($null -ne $ComputerName) {
         $url = "http://$($ComputerName):$($Port)/?search=$($Search)&path_column=1&size_column=1&date_modified_column=1&json=1"
         $results = $(Invoke-RestMethod $url).results
@@ -44,6 +60,8 @@ function Find-Everything {
         $Collections
     }
     else {
+        $ModulePath = "$($env:PSModulePath.Split(";")[0])\PSEverything"
+        ### Confinguration ini
         if (($HttpServerEnabled) -or ($HttpServerDisabled)) {
             $process = Get-Process Everything -ErrorAction Ignore
             $EverythingExec = $process.Path
@@ -67,20 +85,32 @@ function Find-Everything {
             #}
             #$process.CloseMainWindow()
         }
+        ### ES (command line interface)
+        elseif ($ES) {
+            $esExec = "$ModulePath\bin\es.exe"
+            $testPath = Test-Path $esExec
+            if ($testPath -eq $False) {
+                Start-Job -Name ES -ScriptBlock {
+                    $UrlDownload = "https://voidtools.com/ES-1.1.0.26.zip"
+                    Invoke-RestMethod -Uri $UrlDownload -OutFile "$using:ModulePath\bin\es.zip"
+                    Expand-Archive -Path "$using:ModulePath\bin\es.zip" -DestinationPath "$using:ModulePath\bin\"
+                    Remove-Item -Path "$using:ModulePath\bin\es.zip"
+                } | Out-Null
+                $JobState = $(Get-Job -Name ES).State
+                while ($JobState -eq "Running") {
+                    $JobState = $(Get-Job -Name ES).State
+                }
+                Get-Job -Name ES | Remove-Job
+            }
+            $data = & $esExec -r $Search -name -size -date-modified -full-path-and-name -csv 
+            $data | ConvertFrom-CSV
+        }
+        ### Everythingio (CSharp to .NET dll)
+        ### dotnet build .\everythingio.csproj
         else {
-            $data = & $esPathExec -r $Search -name -size -date-modified -full-path-and-name -csv 
-            if ($Json) {
-                $data | ConvertFrom-CSV | ConvertTo-Json
-            }
-            else {
-                $data | ConvertFrom-CSV
-            }
+            $EverythingDll = "$ModulePath\bin\everythingio.dll"
+            Add-Type -Path $EverythingDll
+            [Everything]::Search($Search)
         }
     }
 }
-
-# Find-Everything -HttpServerEnabled
-# Find-Everything -HttpServerDisabled
-# Find-Everything pingui
-# Find-Everything pingui -ComputerName localhost
-# Find-Everything pingui -ComputerName localhost -Json
