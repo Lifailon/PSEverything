@@ -1,7 +1,0 @@
-Everything Command-line Interface
-ES-1.1.0.26
-https://www.voidtools.com
-
-Contact voidtools:
-David Carpenter (Developer of "Everything")
-Email: david.carpenter@voidtools.com
