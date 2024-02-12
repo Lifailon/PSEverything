@@ -13,7 +13,7 @@
             Tags = @("Everything", "Find", "Search", "API", "REST", "dotNET")
             ProjectUri = "https://github.com/Lifailon/PSEverything"
             LicenseUri = "https://github.com/Lifailon/PSEverything/blob/rsa/LICENCE"
-            ReleaseNotes = "Getting data from local and remote computers via dotNET dll, REST API and ES in PSObject format. Enabling and disabling HTTP-server."
+            ReleaseNotes = "Getting data from local and remote computers via .NET library, REST API and ES (cli) for output in PSObject format. Enabling and disabling HTTP-server."
         }
     }
 }

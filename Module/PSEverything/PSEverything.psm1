@@ -71,13 +71,18 @@ function Find-Everything {
         $Collections
     }
     else {
+        ### Save path process Everything to conf
         $ModulePath = "$($env:PSModulePath.Split(";")[0])\PSEverything"
+        $ProcessPath = Get-Content "$ModulePath\PSEverything.conf" -ErrorAction Ignore
+        $testPathExec = Test-Path $ProcessPath -ErrorAction Ignore
+        if (($testPathExec -eq $false) -or ($null -eq $testPathExec)) {
+            $(Get-Process Everything -ErrorAction Ignore).Path | Out-File "$ModulePath\PSEverything.conf"
+            $ProcessPath = Get-Content "$ModulePath\PSEverything.conf" -ErrorAction Ignore
+        }
+        $EverythingPath = [System.IO.Path]::GetDirectoryName($ProcessPath).Trim()
         ### Confinguration ini
         if (($HttpServerEnabled) -or ($HttpServerDisabled)) {
-            $process = Get-Process Everything -ErrorAction Ignore
-            $EverythingExec = $process.Path
-            Get-Process -id $process.id | Stop-Process -ErrorAction Ignore
-            $EverythingPath = [System.IO.Path]::GetDirectoryName($EverythingExec).Trim()
+            $(Get-Process Everything -ErrorAction Ignore)[-1] | Stop-Process -ErrorAction Ignore
             $iniPath = "$EverythingPath\Everything.ini"
             $ini = Get-Content $iniPath
             if ($HttpServerEnabled) {
@@ -88,19 +93,24 @@ function Find-Everything {
                 $ini = $ini -replace "http_server_enabled=.","http_server_enabled=0"
             }
             $ini | Out-File $iniPath
-            $process = Start-Process "$EverythingPath\Everything.exe" -ArgumentList "-close" -PassThru
+            $Process = Start-Process "$EverythingPath\Everything.exe" -ArgumentList "-close" -PassThru
             #while ($true) {
-            #    if ($process.MainWindowHandle -ne 0) {
+            #    if ($Process.MainWindowHandle -ne 0) {
             #        break
             #    }
             #}
-            #$process.CloseMainWindow()
+            #$Process.CloseMainWindow()
         }
         ### ES (command line interface)
         elseif ($ES) {
+            $testPath = $(Get-Process Everything -ErrorAction Ignore).Path
+            if ($null -eq $testPath) {
+                Start-Process "$EverythingPath\Everything.exe" -ArgumentList "-close" | Out-Null
+                Start-Sleep 1
+            }
             $esExec = "$ModulePath\bin\es.exe"
-            $testPath = Test-Path $esExec
-            if ($testPath -eq $False) {
+            $testPathEs = Test-Path $esExec
+            if ($testPathEs -eq $False) {
                 Start-Job -Name ES -ScriptBlock {
                     $UrlDownload = "https://voidtools.com/ES-1.1.0.26.zip"
                     Invoke-RestMethod -Uri $UrlDownload -OutFile "$using:ModulePath\bin\es.zip"
@@ -131,6 +141,11 @@ function Find-Everything {
         ### Everythingio (CSharp to .NET dll)
         ### dotnet build .\everythingio.csproj
         else {
+            $testPath = $(Get-Process Everything -ErrorAction Ignore).Path
+            if ($null -eq $testPath) {
+                Start-Process "$EverythingPath\Everything.exe" -ArgumentList "-close" | Out-Null
+                Start-Sleep 1
+            }
             $EverythingDll = "$ModulePath\bin\everythingio.dll"
             Add-Type -Path $EverythingDll
             $results = [Everything]::Search($Search)
