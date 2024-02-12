@@ -5,7 +5,7 @@ PowerShell wrapper for [Everything](https://www.voidtools.com). Instantly search
 3 ways of data retrieval are implemented:
 
 - ✅ Remote via REST API
-- ✅ Locally via .NET library
+- ✅ Locally via .NET library (source [everythingio](https://github.com/dipique/everythingio))
 - ✅ Locally via ES (Command-line Interface)
 
 ## 🚀 Install
@@ -83,7 +83,7 @@ Remote computer:
 ```PowerShell
 
 > Find-Everything pingui-0.1 -ComputerName localhost
-Invoke-RestMethod: 401 Unauthorized401 Unauthorize
+Invoke-RestMethod: 401 Unauthorized 401 Unauthorize
 
 > Find-Everything pingui-0.1 -ComputerName localhost -User every -Password thing
 
@@ -97,4 +97,4 @@ PingUI-0.1.py            10,15 Kb  21.05.2023 1:23:26  C:\Users\lifailon\Documen
 PingUI-0.1.py            10,15 Kb  21.05.2023 1:23:21  D:\Drive-10-2023\Scripts\Python\PingUI\Source
 ```
 
-[License](https://github.com/Lifailon/PSEverything/blob/rsa/LICENCE)
+📋 [License](https://github.com/Lifailon/PSEverything/blob/rsa/LICENCE)
