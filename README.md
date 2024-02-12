@@ -1,5 +1,10 @@
 # PSEverything
 
+[![GitHub Tag](https://img.shields.io/github/v/tag/Lifailon/PSEverything?logo=GitHub&label=GitHub&link=https%3A%2F%2Fgithub.com%2FLifailon%2FPSEverything)
+](https://github.com/Lifailon/PSEverything)
+[![NuGet Version](https://img.shields.io/nuget/v/PSEverything?logo=NuGet&label=NuGet&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FPSEverything)](https://www.nuget.org/packages/PSEverything)
+[![GitHub top language](https://img.shields.io/github/languages/top/Lifailon/PSEverything?logo=PowerShell&link=https%3A%2F%2Fgithub.com%2FPowerShell%2FPowerShell)](https://github.com/PowerShell/PowerShell)
+
 PowerShell wrapper for [Everything](https://www.voidtools.com). Instantly search for files on local and remote Windows systems for output in PSObject format.
 
 3 ways of data retrieval are implemented:
