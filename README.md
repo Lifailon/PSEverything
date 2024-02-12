@@ -12,10 +12,10 @@ PowerShell wrapper for [Everything](https://www.voidtools.com). Instantly search
 
 You need to [install the Everything](https://www.voidtools.com/downloads) program (a portable version is present) and wait for the local database to be indexed after the first run.
 
-Use the [NuGet](https://www.nuget.org/packages/ps.win.api) package manager:
+Use the [NuGet](https://www.nuget.org/packages/PSEverything) package manager:
 
 ```PowerShell
-Install-Module PSEverything -Repository NuGet -AllowClobber
+Install-Module PSEverything -Repository NuGet
 ```
 
 💡 You must have a NuGet repository registered:
