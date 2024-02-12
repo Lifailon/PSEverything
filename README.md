@@ -28,7 +28,7 @@ When using PSEverything module for the first time, be sure to start Everything t
 
 ## 🔍 Examples
 
-Local computer:
+💻 Local computer via .NET library:
 
 ```PowerShell
 > Find-Everything pingui
@@ -78,7 +78,7 @@ PingUI-0.1.py            10,15 Kb  21.05.2023 1:23:00  C:\Users\lifailon\Documen
 PingUI-0.1.py            10,15 Kb  21.05.2023 1:23:00  D:\Drive-10-2023\Scripts\Python\PingUI\Source\PingUI-0.1.py
 ```
 
-Remote computer:
+📡 Remote computer via REST API:
 
 ```PowerShell
 
