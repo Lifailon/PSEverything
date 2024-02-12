@@ -5,10 +5,11 @@ function Find-Everything {
     Instantly search for files on local and remote (via REST API) Windows systems.
     .DESCRIPTION
     Examples:
+    Find-Everything ping.exe
     Find-Everything -HttpServerEnabled
     Find-Everything -HttpServerDisabled
-    Find-Everything ping.exe
     Find-Everything ping.exe -ComputerName localhost
+    find-Everything ping.exe -ComputerName localhost -user every -password thing
     Find-Everything ping.exe -ES
     .LINK
     https://github.com/Lifailon/PSEverything
@@ -19,6 +20,8 @@ function Find-Everything {
         $Search,
         $ComputerName,
         $Port = "80",
+        $User,
+        $Password,
         [switch]$HttpServerEnabled,
         [switch]$HttpServerDisabled,
         [switch]$ES
@@ -27,7 +30,7 @@ function Find-Everything {
         param (
             $byte
         )
-        if ($byte.Length -eq 0) {
+        if (($byte.Length -eq 0) -or ($byte -eq "-1")) {
             $size = "folder"
         }
         elseif ([int64]$byte -ge 1gb) {
@@ -47,7 +50,15 @@ function Find-Everything {
     ### REST API
     if ($null -ne $ComputerName) {
         $url = "http://$($ComputerName):$($Port)/?search=$($Search)&path_column=1&size_column=1&date_modified_column=1&json=1"
-        $results = $(Invoke-RestMethod $url).results
+        ### Authorization
+        if ($user) {
+            $SecureString = ConvertTo-SecureString $Password -AsPlainText -Force
+            $Credential = New-Object System.Management.Automation.PSCredential($User, $SecureString)
+            $results = $(Invoke-RestMethod -Credential $Credential -AllowUnencryptedAuthentication -Uri $url).results
+        }
+        else {
+            $results = $(Invoke-RestMethod $url).results
+        }
         $Collections = New-Object System.Collections.Generic.List[System.Object]
         foreach ($result in $results) {
             $Collections.Add([PSCustomObject]@{
@@ -103,14 +114,36 @@ function Find-Everything {
                 Get-Job -Name ES | Remove-Job
             }
             $data = & $esExec -r $Search -name -size -date-modified -full-path-and-name -csv 
-            $data | ConvertFrom-CSV
+            $results = $data | ConvertFrom-CSV
+            $format = "dd/MM/yyyy HH:mm"
+            $culture = [System.Globalization.CultureInfo]::InvariantCulture
+            $Collections = New-Object System.Collections.Generic.List[System.Object]
+            foreach ($result in $results) {
+                $Collections.Add([PSCustomObject]@{
+                    name = $result.Name
+                    size = ConvertFrom-Byte $result.size
+                    date_modified = [DateTime]::ParseExact($result."Date Modified", $format, $culture)
+                    path = $result.Filename
+                })
+            }
+            $Collections
         }
         ### Everythingio (CSharp to .NET dll)
         ### dotnet build .\everythingio.csproj
         else {
             $EverythingDll = "$ModulePath\bin\everythingio.dll"
             Add-Type -Path $EverythingDll
-            [Everything]::Search($Search)
+            $results = [Everything]::Search($Search)
+            $Collections = New-Object System.Collections.Generic.List[System.Object]
+            foreach ($result in $results) {
+                $Collections.Add([PSCustomObject]@{
+                    name = $result.Filename
+                    size = ConvertFrom-Byte $result.size
+                    date_modified = [DateTime]$result.DateModified
+                    path = $result.path
+                })
+            }
+            $Collections
         }
     }
 }

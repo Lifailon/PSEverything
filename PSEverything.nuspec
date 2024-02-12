@@ -2,16 +2,15 @@
 <package >
   <metadata>
     <id>PSEverything</id>
-    <version>1.1.0</version>
+    <version>0.1.0</version>
     <authors>Lifailon</authors>
     <owners>Lifailon</owners>
     <description>PowerShell wrapper for Everything. Instantly search for files on local and remote (via REST API) Windows systems.</description>
-    <tags>PowerShell, Module, Everything, Find, Search, API</tags>
+    <tags>PowerShell, Module, Everything, Find, Search, API, REST, dotNET</tags>
     <projectUrl>https://github.com/Lifailon/PSEverything</projectUrl>
     <contentFiles>
-      <files include="bin/cli.c" buildAction="Content" />
-      <files include="bin/es.exe" buildAction="Content" />
-      <files include="source.txt" buildAction="Content" />
+      <files include="bin/Everything64.dll" buildAction="Content" />
+      <files include="bin/everythingio.dll" buildAction="Content" />
       <files include="PSEverything.psm1" buildAction="Content" />
       <files include="PSEverything.psd1" buildAction="Content" />
       <files include="README.md" buildAction="Content" />
