@@ -72,7 +72,7 @@ function Find-Everything {
     }
     else {
         ### Save path process Everything to conf
-        $ModulePath = "$($env:PSModulePath.Split(";")[0])\PSEverything"
+        $ModulePath = "$($env:PSModulePath.Split(";")[0])\PSEverything\0.1"
         $ProcessPath = Get-Content "$ModulePath\PSEverything.conf" -ErrorAction Ignore
         $testPathExec = Test-Path $ProcessPath -ErrorAction Ignore
         if (($testPathExec -eq $false) -or ($null -eq $testPathExec)) {

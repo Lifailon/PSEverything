@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>PSEverything</id>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <authors>Lifailon</authors>
     <owners>Lifailon</owners>
     <description>PowerShell wrapper for Everything. Instantly search for files on local and remote (via REST API) Windows systems.</description>
